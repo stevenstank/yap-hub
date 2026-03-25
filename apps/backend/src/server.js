@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import prisma from "./lib/prisma.js";
 import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 export default function server() {
   const app = express();
@@ -35,6 +36,7 @@ export default function server() {
   });
 
   app.use("/api/auth", authRoutes);
+  app.use("/api/users", userRoutes);
 
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
