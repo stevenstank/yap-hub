@@ -55,14 +55,22 @@ a {
 }
 
 .home-page {
-  display: grid;
+  display: flex;
   min-height: 100vh;
-  place-items: center;
+  justify-content: center;
   padding: 2rem;
+}
+
+.home-shell {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 860px);
+  margin: auto 0 0;
 }
 
 .home-card {
   width: min(100%, 760px);
+  margin: 0 auto;
   padding: 3rem;
   background: #111111;
   border: 1px solid #232323;
@@ -131,6 +139,30 @@ a {
   color: black;
   border-radius: 8px;
   font-weight: 700;
+}
+
+.home-footer {
+  width: 100%;
+  margin-top: 2.5rem;
+  padding: 1.5rem 0;
+  border-top: 1px solid #232323;
+  text-align: center;
+}
+
+.home-footer-text {
+  margin: 0;
+  color: #8c8c8c;
+  font-size: 0.9rem;
+}
+
+.home-footer-link {
+  color: #ffd000;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.home-footer-link:hover {
+  color: #ffe15a;
+  text-decoration: underline;
 }
 
 .auth-page {
@@ -307,10 +339,12 @@ a {
 }
 
 .chat-messages {
-  display: grid;
-  gap: 1rem;
-  padding: 1.5rem;
-  align-content: start;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.75rem;
+  padding: 1rem;
+  min-height: 0;
 }
 
 .chat-message-state {
@@ -320,67 +354,72 @@ a {
 
 .message-row {
   display: flex;
+  width: 100%;
+  margin-bottom: 8px;
 }
 
-.outgoing-row {
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-end {
   justify-content: flex-end;
 }
 
-.message-card {
-  display: inline-flex;
+.message-bubble {
+  display: inline-block;
+  width: fit-content;
+  max-width: 60%;
+  padding: 0.75rem 1rem;
+  border-radius: 18px;
+  word-break: break-word;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.message-bubble-own {
+  background: #ffd000;
+  color: #000000;
+}
+
+.message-bubble-other {
+  background: #1a1a1a;
+  color: #ffffff;
+}
+
+.message-stack {
+  display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  width: 100%;
   gap: 0.35rem;
 }
 
-.message-bubble {
-  max-width: min(75%, 520px);
-  padding: 0.9rem 1rem;
-  border-radius: 14px;
+.message-stack.own {
+  align-items: flex-end;
 }
 
-.message-bubble.incoming {
-  background: var(--surface);
-  color: var(--text);
-}
-
-.message-bubble.outgoing {
-  background: var(--accent);
-  color: black;
-}
-
-.message-bubble.ai {
-  background: #4f46e5;
-  color: #ffffff;
-  box-shadow: 0 0 10px rgba(108, 92, 231, 0.5);
+.message-stack.other {
+  align-items: flex-start;
 }
 
 .message-label {
-  padding-left: 0.15rem;
+  margin-bottom: 0.1rem;
   color: #b5adff;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 0.75rem;
 }
 
 .message-delete-button {
-  align-self: flex-end;
-  padding: 0.25rem;
+  padding: 0;
   background: transparent;
   color: #8f8f8f;
-  border-radius: 999px;
-  opacity: 0;
-  transition: opacity 0.2s ease, color 0.2s ease, background-color 0.2s ease;
-}
-
-.message-row:hover .message-delete-button,
-.message-delete-button:focus-visible {
-  opacity: 1;
+  font-size: 0.75rem;
+  opacity: 0.7;
 }
 
 .message-delete-button:hover {
-  background: #1c1c1c;
+  opacity: 1;
   color: #ff7b7b;
 }
 

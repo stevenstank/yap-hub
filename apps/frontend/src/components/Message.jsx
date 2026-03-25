@@ -1,20 +1,27 @@
-function Message({ message, currentUserId, onDelete }) {
-  const isOwnMessage = message.senderId === currentUserId
+function Message({ message, onDelete }) {
+  const currentUser = JSON.parse(localStorage.getItem('user') || 'null')
+  const isOwnMessage = message.senderId === currentUser?.id
   const isAIMessage = message.senderId === 'ai'
   const canDelete = isOwnMessage && typeof onDelete === 'function'
 
   return (
-    <article className={`message-row${isOwnMessage ? ' outgoing-row' : ''}`}>
-      <div className="message-card">
-        {isAIMessage ? <span className="message-label">AI</span> : null}
+    <div className={`message-row ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
+      <div className={`message-stack ${isOwnMessage ? 'own' : 'other'}`}>
+        {isAIMessage && (
+          <span className="message-label">AI</span>
+        )}
+
         <div
           className={`message-bubble ${
-            isOwnMessage ? 'outgoing' : isAIMessage ? 'ai' : 'incoming'
+            isOwnMessage
+              ? 'message-bubble-own'
+              : 'message-bubble-other'
           }`}
         >
           {message.content}
         </div>
-        {canDelete ? (
+
+        {canDelete && (
           <button
             className="message-delete-button"
             type="button"
@@ -24,9 +31,9 @@ function Message({ message, currentUserId, onDelete }) {
           >
             🗑️
           </button>
-        ) : null}
+        )}
       </div>
-    </article>
+    </div>
   )
 }
 

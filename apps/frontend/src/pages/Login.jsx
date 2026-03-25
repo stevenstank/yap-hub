@@ -28,6 +28,8 @@ function Login() {
     try {
       const response = await axios.post('/auth/login', formData)
       localStorage.setItem('token', response.data.token)
+      const meResponse = await axios.get('/auth/me')
+      localStorage.setItem('user', JSON.stringify(meResponse.data))
       navigate('/dashboard')
     } catch (requestError) {
       setError(requestError.response?.data?.message || 'Login failed')

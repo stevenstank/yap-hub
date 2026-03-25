@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from '../api/axios.js'
+import api from '../api/axios.js'
 import Message from '../components/Message.jsx'
 
 const aiUser = {
@@ -23,11 +23,20 @@ function Dashboard() {
 
   async function loadUsers() {
     try {
-      const response = await axios.get('/users')
-      setUsers(response.data)
+      setSidebarError('')
+      const res = await api.get('/users')
+      const currentUser = JSON.parse(localStorage.getItem('user'))
+      const filteredUsers = res.data.filter((user) => user.id !== currentUser?.id)
+      const finalUsers = [aiUser, ...filteredUsers]
 
-      if (!selectedUser && response.data[0]) {
-        setSelectedUser(response.data[0])
+      setUsers(finalUsers)
+
+      if (selectedUser && !finalUsers.some((user) => user.id === selectedUser.id)) {
+        setSelectedUser(null)
+      }
+
+      if (!selectedUser && finalUsers[0]) {
+        setSelectedUser(finalUsers[0])
       }
     } catch (requestError) {
       setSidebarError(
@@ -39,8 +48,8 @@ function Dashboard() {
   async function loadMessages(userId) {
     try {
       setChatError('')
-      const response = await axios.get(`/messages/${userId}`)
-      setMessages(response.data)
+      const res = await api.get(`/messages/${userId}`)
+      setMessages(res.data)
     } catch (requestError) {
       setChatError(
         requestError.response?.data?.message || 'Failed to load messages'
@@ -51,9 +60,10 @@ function Dashboard() {
   useEffect(() => {
     async function loadDashboard() {
       try {
-        const meResponse = await axios.get('/auth/me')
+        const meResponse = await api.get('/auth/me')
 
         setCurrentUserId(meResponse.data.id)
+        localStorage.setItem('user', JSON.stringify(meResponse.data))
         await loadUsers()
       } catch (requestError) {
         setSidebarError(
@@ -119,7 +129,7 @@ function Dashboard() {
         setAiMessages((current) => [...current, userMessage])
         setMessageInput('')
 
-        const response = await axios.post('/ai', {
+        const response = await api.post('/ai', {
           message: trimmedMessage,
         })
 
@@ -127,32 +137,42 @@ function Dashboard() {
           id: `ai-reply-${Date.now()}`,
           content: response.data.reply,
           senderId: aiUser.id,
-          isAI: true,
         }
 
         setAiMessages((current) => [...current, aiReply])
         return
       }
 
-      await axios.post('/messages', {
+      await api.post('/messages', {
         receiverId: selectedUser.id,
         content: trimmedMessage,
       })
       setMessageInput('')
       await loadMessages(selectedUser.id)
     } catch (requestError) {
+      if (selectedUser.id === aiUser.id) {
+        const fallbackReply = {
+          id: `ai-reply-fallback-${Date.now()}`,
+          content: 'Something broke, but I am still here 👀',
+          senderId: aiUser.id,
+        }
+
+        setAiMessages((current) => [...current, fallbackReply])
+        return
+      }
+
       setChatError(requestError.response?.data?.message || 'Failed to send message')
     }
   }
 
   async function handleDeleteMessage(messageId) {
-    if (!selectedUser) {
+    if (!selectedUser || selectedUser.id === aiUser.id) {
       return
     }
 
     try {
       setChatError('')
-      await axios.delete(`/messages/${messageId}`)
+      await api.delete(`/messages/${messageId}`)
       await loadMessages(selectedUser.id)
     } catch (requestError) {
       setChatError(
@@ -163,6 +183,7 @@ function Dashboard() {
 
   function handleLogout() {
     localStorage.removeItem('token')
+    localStorage.removeItem('user')
     navigate('/')
   }
 
@@ -181,31 +202,25 @@ function Dashboard() {
           {!sidebarError && users.length === 0 ? (
             <p className="sidebar-message">No users found.</p>
           ) : null}
-          <button
-            className={`conversation-item conversation-item-ai${
-              selectedUser?.id === aiUser.id ? ' active' : ''
-            }`}
-            type="button"
-            onClick={() => setSelectedUser(aiUser)}
-          >
-            <span className="conversation-topline">
-              <span className="conversation-name">{aiUser.username}</span>
-              <span className="conversation-badge">AI</span>
-            </span>
-            <span className="conversation-preview">Ask anything</span>
-          </button>
           {users.map((user) => {
             const isActive = selectedUser?.id === user.id
 
             return (
               <button
                 key={user.id}
-                className={`conversation-item${isActive ? ' active' : ''}`}
+                className={`conversation-item${
+                  user.isAI ? ' conversation-item-ai' : ''
+                }${isActive ? ' active' : ''}`}
                 type="button"
                 onClick={() => setSelectedUser(user)}
               >
-                <span className="conversation-name">{user.username}</span>
-                <span className="conversation-preview">{user.email}</span>
+                <span className="conversation-topline">
+                  <span className="conversation-name">{user.username}</span>
+                  {user.isAI ? <span className="conversation-badge">AI</span> : null}
+                </span>
+                <span className="conversation-preview">
+                  {user.isAI ? 'Ask anything' : user.email}
+                </span>
               </button>
             )
           })}
@@ -239,7 +254,6 @@ function Dashboard() {
             <Message
               key={message.id}
               message={message}
-              currentUserId={currentUserId}
               onDelete={isAIChat ? undefined : handleDeleteMessage}
             />
           ))}

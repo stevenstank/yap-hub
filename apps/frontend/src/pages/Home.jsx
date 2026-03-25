@@ -15,29 +15,45 @@ const features = [
 function Home() {
   return (
     <main className="home-page">
-      <section className="home-card">
-        <p className="home-kicker">YapHub</p>
-        <h1>Welcome to YapHub</h1>
-        <p className="home-subtitle">Simple. Clean. Messaging.</p>
+      <div className="home-shell">
+        <section className="home-card">
+          <p className="home-kicker">YapHub</p>
+          <h1>Welcome to YapHub</h1>
+          <p className="home-subtitle">Simple. Clean. Messaging.</p>
 
-        <div className="home-features">
-          <h2>What you can do:</h2>
-          <ul>
-            {features.map((feature) => (
-              <li key={feature}>{feature}</li>
-            ))}
-          </ul>
-        </div>
+          <div className="home-features">
+            <h2>What you can do:</h2>
+            <ul>
+              {features.map((feature) => (
+                <li key={feature}>{feature}</li>
+              ))}
+            </ul>
+          </div>
 
-        <div className="home-actions">
-          <Link className="home-button" to="/login">
-            Login
-          </Link>
-          <Link className="home-button" to="/signup">
-            Signup
-          </Link>
-        </div>
-      </section>
+          <div className="home-actions">
+            <Link className="home-button" to="/login">
+              Login
+            </Link>
+            <Link className="home-button" to="/signup">
+              Signup
+            </Link>
+          </div>
+        </section>
+
+        <footer className="home-footer">
+          <p className="home-footer-text">
+            Made with ❤️ by{' '}
+            <a
+              href="https://github.com/stevenstank"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="home-footer-link"
+            >
+              stevenstank
+            </a>
+          </p>
+        </footer>
+      </div>
     </main>
   )
 }

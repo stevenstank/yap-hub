@@ -65,6 +65,17 @@ function Profile() {
         bio: response.data.bio || '',
         profilePicture: response.data.profilePicture || '',
       }))
+      localStorage.setItem(
+        'user',
+        JSON.stringify({
+          id: response.data.id,
+          username: response.data.username,
+          email: formData.email,
+          profilePicture: response.data.profilePicture,
+          bio: response.data.bio,
+          createdAt: response.data.createdAt,
+        })
+      )
       setSuccess('Profile updated successfully')
     } catch (requestError) {
       setError(requestError.response?.data?.message || 'Failed to update profile')
