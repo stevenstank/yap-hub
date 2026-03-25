@@ -75,6 +75,11 @@ select:focus {
   color: #ff8a8a;
 }
 
+.auth-success {
+  margin: 0;
+  color: #a9ff9f;
+}
+
 .dashboard-page {
   display: grid;
   grid-template-columns: 320px minmax(0, 1fr);
@@ -111,6 +116,12 @@ select:focus {
   align-content: start;
 }
 
+.sidebar-message {
+  margin: 0;
+  padding: 0.25rem 0.25rem 0.5rem;
+  color: #9a9a9a;
+}
+
 .conversation-item {
   display: grid;
   gap: 0.35rem;
@@ -139,7 +150,7 @@ select:focus {
 
 .chat-panel {
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto 1fr auto;
   background: var(--background);
 }
 
@@ -154,6 +165,11 @@ select:focus {
   gap: 1rem;
   padding: 1.5rem;
   align-content: start;
+}
+
+.chat-message-state {
+  margin: 0;
+  color: #9a9a9a;
 }
 
 .message-row {
@@ -178,6 +194,15 @@ select:focus {
 .message-bubble.outgoing {
   background: var(--accent);
   color: black;
+}
+
+.chat-input-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  padding: 1rem 1.5rem 1.5rem;
+  border-top: 1px solid #1a1a1a;
+  background: var(--panel);
 }
 
 @media (max-width: 900px) {
