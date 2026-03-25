@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import prisma from "./lib/prisma.js";
+import authRoutes from "./routes/authRoutes.js";
 
 export default function server() {
   const app = express();
@@ -27,6 +28,13 @@ export default function server() {
     const users = await prisma.user.findMany();
     res.json(users);
   });
+
+  app.get("/api/messages-test", async (req, res) => {
+    const messages = await prisma.message.findMany();
+    res.json(messages);
+  });
+
+  app.use("/api/auth", authRoutes);
 
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
