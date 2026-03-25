@@ -236,6 +236,11 @@ a {
   text-align: left;
 }
 
+.conversation-item-ai {
+  background: #141018;
+  border-color: #2d2233;
+}
+
 .conversation-item.unread {
   border-color: #3a1d1d;
   background: #151010;
@@ -265,6 +270,16 @@ a {
 .conversation-preview {
   color: #9a9a9a;
   font-size: 0.95rem;
+}
+
+.conversation-badge {
+  padding: 0.15rem 0.5rem;
+  background: #2a2032;
+  color: #d7b9ff;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
 }
 
 .unread-dot {
@@ -313,8 +328,9 @@ a {
 
 .message-card {
   display: inline-flex;
+  flex-direction: column;
   align-items: flex-start;
-  gap: 0.5rem;
+  gap: 0.35rem;
 }
 
 .message-bubble {
@@ -333,8 +349,23 @@ a {
   color: black;
 }
 
+.message-bubble.ai {
+  background: #4f46e5;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(108, 92, 231, 0.5);
+}
+
+.message-label {
+  padding-left: 0.15rem;
+  color: #b5adff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .message-delete-button {
-  align-self: center;
+  align-self: flex-end;
   padding: 0.25rem;
   background: transparent;
   color: #8f8f8f;

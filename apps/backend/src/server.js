@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import prisma from "./lib/prisma.js";
+import aiRoutes from "./routes/aiRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -39,6 +40,7 @@ export function createApp() {
     res.json(messages);
   });
 
+  app.use("/api/ai", aiRoutes);
   app.use("/api/auth", authRoutes);
   app.use("/api/messages", messageRoutes);
   app.use("/api/users", userRoutes);

@@ -3,15 +3,23 @@ import { useNavigate } from 'react-router-dom'
 import axios from '../api/axios.js'
 import Message from '../components/Message.jsx'
 
+const aiUser = {
+  id: 'ai',
+  username: 'YapHub AI',
+  isAI: true,
+}
+
 function Dashboard() {
   const navigate = useNavigate()
   const [users, setUsers] = useState([])
   const [selectedUser, setSelectedUser] = useState(null)
   const [messages, setMessages] = useState([])
+  const [aiMessages, setAiMessages] = useState([])
   const [currentUserId, setCurrentUserId] = useState('')
   const [messageInput, setMessageInput] = useState('')
   const [sidebarError, setSidebarError] = useState('')
   const [chatError, setChatError] = useState('')
+  const isAIChat = selectedUser?.id === aiUser.id
 
   async function loadUsers() {
     try {
@@ -64,6 +72,11 @@ function Dashboard() {
         return
       }
 
+      if (selectedUser.id === aiUser.id) {
+        setChatError('')
+        return
+      }
+
       await loadMessages(selectedUser.id)
     }
 
@@ -71,7 +84,7 @@ function Dashboard() {
   }, [selectedUser])
 
   useEffect(() => {
-    if (!selectedUser) {
+    if (!selectedUser || selectedUser.id === aiUser.id) {
       return undefined
     }
 
@@ -91,10 +104,39 @@ function Dashboard() {
       return
     }
 
+    const trimmedMessage = messageInput.trim()
+
     try {
+      setChatError('')
+
+      if (selectedUser.id === aiUser.id) {
+        const userMessage = {
+          id: `ai-user-${Date.now()}`,
+          content: trimmedMessage,
+          senderId: currentUserId,
+        }
+
+        setAiMessages((current) => [...current, userMessage])
+        setMessageInput('')
+
+        const response = await axios.post('/ai', {
+          message: trimmedMessage,
+        })
+
+        const aiReply = {
+          id: `ai-reply-${Date.now()}`,
+          content: response.data.reply,
+          senderId: aiUser.id,
+          isAI: true,
+        }
+
+        setAiMessages((current) => [...current, aiReply])
+        return
+      }
+
       await axios.post('/messages', {
         receiverId: selectedUser.id,
-        content: messageInput,
+        content: trimmedMessage,
       })
       setMessageInput('')
       await loadMessages(selectedUser.id)
@@ -124,6 +166,8 @@ function Dashboard() {
     navigate('/')
   }
 
+  const activeMessages = isAIChat ? aiMessages : messages
+
   return (
     <main className="dashboard-page">
       <aside className="chat-sidebar">
@@ -137,6 +181,19 @@ function Dashboard() {
           {!sidebarError && users.length === 0 ? (
             <p className="sidebar-message">No users found.</p>
           ) : null}
+          <button
+            className={`conversation-item conversation-item-ai${
+              selectedUser?.id === aiUser.id ? ' active' : ''
+            }`}
+            type="button"
+            onClick={() => setSelectedUser(aiUser)}
+          >
+            <span className="conversation-topline">
+              <span className="conversation-name">{aiUser.username}</span>
+              <span className="conversation-badge">AI</span>
+            </span>
+            <span className="conversation-preview">Ask anything</span>
+          </button>
           {users.map((user) => {
             const isActive = selectedUser?.id === user.id
 
@@ -159,7 +216,11 @@ function Dashboard() {
         <header className="chat-header">
           <div>
             <h2>{selectedUser?.username || 'Select a user'}</h2>
-            <p>{selectedUser?.email || 'Choose someone from the sidebar'}</p>
+            <p>
+              {selectedUser?.isAI
+                ? 'Chat with YapHub AI'
+                : selectedUser?.email || 'Choose someone from the sidebar'}
+            </p>
           </div>
           <button type="button" onClick={handleLogout}>
             Logout
@@ -171,15 +232,15 @@ function Dashboard() {
           {!chatError && !selectedUser ? (
             <p className="chat-message-state">Select a user to open the chat.</p>
           ) : null}
-          {!chatError && selectedUser && messages.length === 0 ? (
+          {!chatError && selectedUser && activeMessages.length === 0 ? (
             <p className="chat-message-state">No messages yet.</p>
           ) : null}
-          {messages.map((message) => (
+          {activeMessages.map((message) => (
             <Message
               key={message.id}
               message={message}
               currentUserId={currentUserId}
-              onDelete={handleDeleteMessage}
+              onDelete={isAIChat ? undefined : handleDeleteMessage}
             />
           ))}
         </div>
