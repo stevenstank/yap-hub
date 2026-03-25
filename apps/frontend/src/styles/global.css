@@ -2,6 +2,9 @@
   --background: #0a0a0a;
   --text: #ffffff;
   --accent: #ffd000;
+  --panel: #111111;
+  --sidebar: #050505;
+  --surface: #181818;
   --input-background: #141414;
   --input-border: #2a2a2a;
 }
@@ -70,4 +73,120 @@ select:focus {
 .auth-error {
   margin: 0;
   color: #ff8a8a;
+}
+
+.dashboard-page {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.chat-sidebar {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background: var(--sidebar);
+  border-right: 1px solid #1f1f1f;
+}
+
+.sidebar-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.sidebar-header h1,
+.chat-header h2 {
+  margin: 0;
+}
+
+.sidebar-header p,
+.chat-header p {
+  margin: 0.35rem 0 0;
+  color: #9f9f9f;
+}
+
+.conversation-list {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  align-content: start;
+}
+
+.conversation-item {
+  display: grid;
+  gap: 0.35rem;
+  width: 100%;
+  padding: 1rem;
+  background: #101010;
+  color: white;
+  border: 1px solid #1f1f1f;
+  text-align: left;
+}
+
+.conversation-item.active {
+  background: #1d1800;
+  border-color: #ffd000;
+  box-shadow: inset 3px 0 0 #ffd000;
+}
+
+.conversation-name {
+  font-weight: 700;
+}
+
+.conversation-preview {
+  color: #9a9a9a;
+  font-size: 0.95rem;
+}
+
+.chat-panel {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background: var(--background);
+}
+
+.chat-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #1a1a1a;
+  background: var(--panel);
+}
+
+.chat-messages {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem;
+  align-content: start;
+}
+
+.message-row {
+  display: flex;
+}
+
+.outgoing-row {
+  justify-content: flex-end;
+}
+
+.message-bubble {
+  max-width: min(75%, 520px);
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+}
+
+.message-bubble.incoming {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.message-bubble.outgoing {
+  background: var(--accent);
+  color: black;
+}
+
+@media (max-width: 900px) {
+  .dashboard-page {
+    grid-template-columns: 1fr;
+  }
+
+  .chat-sidebar {
+    border-right: none;
+    border-bottom: 1px solid #1f1f1f;
+  }
 }
