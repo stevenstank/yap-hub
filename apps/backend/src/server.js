@@ -5,9 +5,8 @@ import authRoutes from "./routes/authRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 
-export default function server() {
+export function createApp() {
   const app = express();
-  const PORT = process.env.PORT || 5000;
 
   app.use(
     cors({
@@ -17,6 +16,10 @@ export default function server() {
   );
 
   app.use(express.json());
+
+  app.get("/", (req, res) => {
+    res.json({ message: "API is running" });
+  });
 
   app.get("/api/health", (req, res) => {
     res.json({ status: "OK" });
@@ -40,7 +43,14 @@ export default function server() {
   app.use("/api/messages", messageRoutes);
   app.use("/api/users", userRoutes);
 
-  app.listen(PORT, () => {
+  return app;
+}
+
+export default function server() {
+  const app = createApp();
+  const PORT = process.env.PORT || 5000;
+
+  return app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
 }
