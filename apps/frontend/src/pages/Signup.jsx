@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from '../api/axios.js'
+import api from '../api/axios'
 
 function Signup() {
+  console.log('Signup page rendered')
+
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
     username: '',
@@ -26,11 +28,18 @@ function Signup() {
     setError('')
     setIsSubmitting(true)
 
+    const { username, email, password } = formData
+
     try {
-      await axios.post('/auth/signup', formData)
+      await api.post('/auth/signup', {
+        username,
+        email,
+        password,
+      })
       navigate('/login')
-    } catch (requestError) {
-      setError(requestError.response?.data?.message || 'Signup failed')
+    } catch (err) {
+      console.error(err)
+      setError('Signup failed')
     } finally {
       setIsSubmitting(false)
     }
