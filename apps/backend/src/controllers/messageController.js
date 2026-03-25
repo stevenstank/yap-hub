@@ -135,12 +135,48 @@ export async function getConversations(req, res) {
           lastMessage: {
             content: message.content,
             createdAt: message.createdAt,
+            senderId: message.senderId,
           },
         });
       }
     }
 
     return res.status(200).json(Array.from(conversationsMap.values()));
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+}
+
+export async function deleteMessage(req, res) {
+  try {
+    const { id: messageId } = req.params;
+    const userId = req.user.userId;
+
+    const message = await prisma.message.findUnique({
+      where: { id: messageId },
+    });
+
+    if (!message) {
+      return res.status(404).json({
+        message: "Message not found",
+      });
+    }
+
+    if (message.senderId !== userId) {
+      return res.status(403).json({
+        message: "Unauthorized",
+      });
+    }
+
+    await prisma.message.delete({
+      where: { id: messageId },
+    });
+
+    return res.status(200).json({
+      message: "Message deleted successfully",
+    });
   } catch (error) {
     return res.status(500).json({
       message: "Internal server error",

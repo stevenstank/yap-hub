@@ -38,27 +38,37 @@ function Login() {
 
   return (
     <main className="auth-page">
-      <form className="auth-card" onSubmit={handleSubmit}>
-        <h1>Welcome back</h1>
-        <input
-          name="email"
-          type="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-        />
-        <input
-          name="password"
-          type="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-        />
-        {error ? <p className="auth-error">{error}</p> : null}
-        <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Signing in...' : 'Login'}
+      <div className="auth-shell">
+        <button
+          className="auth-back-button"
+          type="button"
+          onClick={() => navigate('/')}
+        >
+          ← Back to Home
         </button>
-      </form>
+
+        <form className="auth-card" onSubmit={handleSubmit}>
+          <h1>Welcome back</h1>
+          <input
+            name="email"
+            type="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+          <input
+            name="password"
+            type="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+          {error ? <p className="auth-error">{error}</p> : null}
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Signing in...' : 'Login'}
+          </button>
+        </form>
+      </div>
     </main>
   )
 }

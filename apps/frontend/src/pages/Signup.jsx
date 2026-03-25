@@ -47,34 +47,44 @@ function Signup() {
 
   return (
     <main className="auth-page">
-      <form className="auth-card" onSubmit={handleSubmit}>
-        <h1>Create account</h1>
-        <input
-          name="username"
-          type="text"
-          placeholder="Username"
-          value={formData.username}
-          onChange={handleChange}
-        />
-        <input
-          name="email"
-          type="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-        />
-        <input
-          name="password"
-          type="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-        />
-        {error ? <p className="auth-error">{error}</p> : null}
-        <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Creating...' : 'Sign up'}
+      <div className="auth-shell">
+        <button
+          className="auth-back-button"
+          type="button"
+          onClick={() => navigate('/')}
+        >
+          ← Back to Home
         </button>
-      </form>
+
+        <form className="auth-card" onSubmit={handleSubmit}>
+          <h1>Create account</h1>
+          <input
+            name="username"
+            type="text"
+            placeholder="Username"
+            value={formData.username}
+            onChange={handleChange}
+          />
+          <input
+            name="email"
+            type="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+          <input
+            name="password"
+            type="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+          {error ? <p className="auth-error">{error}</p> : null}
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Creating...' : 'Sign up'}
+          </button>
+        </form>
+      </div>
     </main>
   )
 }

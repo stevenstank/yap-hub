@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  deleteMessage,
   getConversations,
   getMessages,
   sendMessage,
@@ -9,6 +10,7 @@ import { authMiddleware } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.post("/", authMiddleware, sendMessage);
+router.delete("/:id", authMiddleware, deleteMessage);
 
 router.get("/conversations", authMiddleware, getConversations);
 router.get("/:userId", authMiddleware, getMessages);

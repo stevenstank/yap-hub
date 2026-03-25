@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import axios from '../api/axios.js'
+import Message from '../components/Message.jsx'
 
 function Dashboard() {
+  const navigate = useNavigate()
   const [users, setUsers] = useState([])
   const [selectedUser, setSelectedUser] = useState(null)
   const [messages, setMessages] = useState([])
@@ -9,6 +12,21 @@ function Dashboard() {
   const [messageInput, setMessageInput] = useState('')
   const [sidebarError, setSidebarError] = useState('')
   const [chatError, setChatError] = useState('')
+
+  async function loadUsers() {
+    try {
+      const response = await axios.get('/users')
+      setUsers(response.data)
+
+      if (!selectedUser && response.data[0]) {
+        setSelectedUser(response.data[0])
+      }
+    } catch (requestError) {
+      setSidebarError(
+        requestError.response?.data?.message || 'Failed to load users'
+      )
+    }
+  }
 
   async function loadMessages(userId) {
     try {
@@ -25,14 +43,10 @@ function Dashboard() {
   useEffect(() => {
     async function loadDashboard() {
       try {
-        const [meResponse, usersResponse] = await Promise.all([
-          axios.get('/auth/me'),
-          axios.get('/users'),
-        ])
+        const meResponse = await axios.get('/auth/me')
 
         setCurrentUserId(meResponse.data.id)
-        setUsers(usersResponse.data)
-        setSelectedUser(usersResponse.data[0] || null)
+        await loadUsers()
       } catch (requestError) {
         setSidebarError(
           requestError.response?.data?.message || 'Failed to load users'
@@ -89,6 +103,27 @@ function Dashboard() {
     }
   }
 
+  async function handleDeleteMessage(messageId) {
+    if (!selectedUser) {
+      return
+    }
+
+    try {
+      setChatError('')
+      await axios.delete(`/messages/${messageId}`)
+      await loadMessages(selectedUser.id)
+    } catch (requestError) {
+      setChatError(
+        requestError.response?.data?.message || 'Failed to delete message'
+      )
+    }
+  }
+
+  function handleLogout() {
+    localStorage.removeItem('token')
+    navigate('/')
+  }
+
   return (
     <main className="dashboard-page">
       <aside className="chat-sidebar">
@@ -102,19 +137,21 @@ function Dashboard() {
           {!sidebarError && users.length === 0 ? (
             <p className="sidebar-message">No users found.</p>
           ) : null}
-          {users.map((user) => (
-            <button
-              key={user.id}
-              className={`conversation-item${
-                selectedUser?.id === user.id ? ' active' : ''
-              }`}
-              type="button"
-              onClick={() => setSelectedUser(user)}
-            >
-              <span className="conversation-name">{user.username}</span>
-              <span className="conversation-preview">{user.email}</span>
-            </button>
-          ))}
+          {users.map((user) => {
+            const isActive = selectedUser?.id === user.id
+
+            return (
+              <button
+                key={user.id}
+                className={`conversation-item${isActive ? ' active' : ''}`}
+                type="button"
+                onClick={() => setSelectedUser(user)}
+              >
+                <span className="conversation-name">{user.username}</span>
+                <span className="conversation-preview">{user.email}</span>
+              </button>
+            )
+          })}
         </nav>
       </aside>
 
@@ -124,6 +161,9 @@ function Dashboard() {
             <h2>{selectedUser?.username || 'Select a user'}</h2>
             <p>{selectedUser?.email || 'Choose someone from the sidebar'}</p>
           </div>
+          <button type="button" onClick={handleLogout}>
+            Logout
+          </button>
         </header>
 
         <div className="chat-messages">
@@ -135,20 +175,12 @@ function Dashboard() {
             <p className="chat-message-state">No messages yet.</p>
           ) : null}
           {messages.map((message) => (
-            <article
+            <Message
               key={message.id}
-              className={`message-row${
-                message.senderId === currentUserId ? ' outgoing-row' : ''
-              }`}
-            >
-              <div
-                className={`message-bubble ${
-                  message.senderId === currentUserId ? 'outgoing' : 'incoming'
-                }`}
-              >
-                {message.content}
-              </div>
-            </article>
+              message={message}
+              currentUserId={currentUserId}
+              onDelete={handleDeleteMessage}
+            />
           ))}
         </div>
 

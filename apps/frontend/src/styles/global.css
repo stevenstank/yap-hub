@@ -140,6 +140,25 @@ a {
   padding: 2rem;
 }
 
+.auth-shell {
+  display: grid;
+  gap: 1rem;
+  width: min(100%, 420px);
+}
+
+.auth-back-button {
+  justify-self: start;
+  padding: 0;
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.auth-back-button:hover {
+  text-decoration: underline;
+}
+
 .auth-card {
   display: grid;
   gap: 1rem;
@@ -217,19 +236,43 @@ a {
   text-align: left;
 }
 
+.conversation-item.unread {
+  border-color: #3a1d1d;
+  background: #151010;
+}
+
 .conversation-item.active {
   background: #1d1800;
   border-color: #ffd000;
   box-shadow: inset 3px 0 0 #ffd000;
 }
 
+.conversation-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
 .conversation-name {
   font-weight: 700;
+}
+
+.conversation-item.unread .conversation-name {
+  font-weight: 800;
 }
 
 .conversation-preview {
   color: #9a9a9a;
   font-size: 0.95rem;
+}
+
+.unread-dot {
+  width: 10px;
+  height: 10px;
+  background: #ff4d4d;
+  border-radius: 999px;
+  flex: 0 0 auto;
 }
 
 .chat-panel {
@@ -239,6 +282,10 @@ a {
 }
 
 .chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
   padding: 1.5rem;
   border-bottom: 1px solid #1a1a1a;
   background: var(--panel);
@@ -264,6 +311,12 @@ a {
   justify-content: flex-end;
 }
 
+.message-card {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
 .message-bubble {
   max-width: min(75%, 520px);
   padding: 0.9rem 1rem;
@@ -278,6 +331,26 @@ a {
 .message-bubble.outgoing {
   background: var(--accent);
   color: black;
+}
+
+.message-delete-button {
+  align-self: center;
+  padding: 0.25rem;
+  background: transparent;
+  color: #8f8f8f;
+  border-radius: 999px;
+  opacity: 0;
+  transition: opacity 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+}
+
+.message-row:hover .message-delete-button,
+.message-delete-button:focus-visible {
+  opacity: 1;
+}
+
+.message-delete-button:hover {
+  background: #1c1c1c;
+  color: #ff7b7b;
 }
 
 .chat-input-bar {
